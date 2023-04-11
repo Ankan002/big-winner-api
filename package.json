@@ -1,0 +1,9 @@
+{
+  "name": "big-winner-api",
+  "version": "0.0.1",
+  "description": "This is the main API of Big Winner App",
+  "main": "build/index.js",
+  "repository": "https://github.com/Ankan002/big-winner-api.git",
+  "author": "Ankan Bhattacharya",
+  "license": "MIT"
+}
