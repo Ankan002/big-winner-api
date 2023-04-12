@@ -1,0 +1,41 @@
+{
+	"compilerOptions": {
+		"target": "ES2022",
+		"lib": ["ES2022"],
+		"allowJs": false,
+		"skipLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noUncheckedIndexedAccess": true,
+		"exactOptionalPropertyTypes": true,
+		"noImplicitReturns": true,
+		"noImplicitThis": true,
+		"noPropertyAccessFromIndexSignature": true,
+		"noUnusedLocals": true,
+		"useUnknownInCatchVariables": true,
+		"allowUnreachableCode": false,
+		"alwaysStrict": true,
+		"noUnusedParameters": false,
+		"noImplicitAny": true,
+		"pretty": true,
+		"typeRoots": ["src/@types", "./node_modules/@types"],
+		"noEmit": false,
+		"esModuleInterop": true,
+		"module": "ESNext", // TODO: Check if not working in production
+		"moduleResolution": "bundler",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"baseUrl": "src",
+		"paths": {
+			"routes/*": ["./routes/*"],
+			"controllers/*": ["./controllers/*"],
+			"middlewares/*": ["./middlewares/*"],
+			"constants/*": ["./constants/*"],
+			"config/*": ["./config/*"],
+			"utils/*": ["./utils/*"],
+			"helpers/*": ["./helpers/*"],
+			"models/*": ["./models/*"]
+		}
+	},
+	"include": ["src/**/*", "./commitlint.config.ts", "./jest.config.ts"]
+}
