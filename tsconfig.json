@@ -6,7 +6,6 @@
 		"skipLibCheck": true,
 		"strict": true,
 		"outDir": "build",
-		"rootDir": "src",
 		"forceConsistentCasingInFileNames": true,
 		"noUncheckedIndexedAccess": true,
 		"exactOptionalPropertyTypes": true,
