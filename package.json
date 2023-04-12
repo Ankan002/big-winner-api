@@ -6,6 +6,23 @@
   "repository": "https://github.com/Ankan002/big-winner-api.git",
   "author": "Ankan Bhattacharya",
   "license": "MIT",
+  "scripts": {
+		"start": "node build/index.js",
+		"dev": "nodemon",
+		"build": "yarn db-push && swc src -d build",
+		"build-dev": "swc src -d build",
+		"test": "jest --passWithNoTests",
+		"test-dev": "jest --passWithNoTests --setupFiles dotenv/config",
+		"db-push-dev": "npx prisma db push",
+		"db-pull": "npx prisma db pull",
+		"db-generate": "npx prisma generate",
+		"db-push": "npx prisma db push --accept-data-loss",
+		"prepare": "husky install",
+		"lint": "eslint",
+		"pre-commit": "yarn lint && yarn test-dev && yarn build-dev",
+		"post-merge": "yarn install",
+		"commit-msg": "npx --no-install commitlint --edit"
+	},
   "dependencies": {
     "@prisma/client": "^4.12.0",
     "axios": "^1.3.5",
