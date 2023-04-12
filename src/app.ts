@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import fileUpload from "express-fileupload";
+import { logger } from "utils/logger";
 
 export const startServer = () => {
 	const app = express();
@@ -21,5 +22,5 @@ export const startServer = () => {
 		});
 	});
 
-	app.listen(PORT, () => console.log(`App is running at PORT: ${PORT}`));
+	app.listen(PORT, () => logger.info(`App is running at PORT: ${PORT}`));
 };
