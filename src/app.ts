@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import fileUpload from "express-fileupload";
 import { logger } from "utils/logger";
+import { morganConfig } from "middlewares/morgan";
 
 export const startServer = () => {
 	const app = express();
@@ -14,6 +15,8 @@ export const startServer = () => {
 			useTempFiles: true,
 		})
 	);
+
+	app.use(morganConfig);
 
 	app.get("/", (req, res) => {
 		return res.status(200).json({
