@@ -13,3 +13,5 @@ node_modules
 build
 out
 dist
+
+yarn-error.log

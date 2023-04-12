@@ -22,8 +22,8 @@
 		"typeRoots": ["src/@types", "./node_modules/@types"],
 		"noEmit": false,
 		"esModuleInterop": true,
-		"module": "ESNext", // TODO: Check if not working in production
-		"moduleResolution": "bundler",
+		"module": "CommonJS",
+		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"isolatedModules": true,
 		"baseUrl": "src",
