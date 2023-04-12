@@ -1,0 +1,36 @@
+{
+	"jsc": {
+		"parser": {
+			"syntax": "typescript",
+			"tsx": false,
+			"dynamicImport": true,
+			"decorators": true
+		},
+		"transform": {
+			"legacyDecorator": true,
+			"decoratorMetadata": true
+		},
+		"target": "es2022",
+		"externalHelpers": false,
+		"keepClassNames": true,
+		"loose": false,
+		"minify": {
+			"compress": false,
+			"mangle": false
+		},
+		"baseUrl": "src",
+		"paths": {
+			"routes/*": ["./routes/*"],
+			"controllers/*": ["./controllers/*"],
+			"middlewares/*": ["./middlewares/*"],
+			"constants/*": ["./constants/*"],
+			"config/*": ["./config/*"],
+			"utils/*": ["./utils/*"],
+			"helpers/*": ["./helpers/*"],
+			"models/*": ["./models/*"]
+		}
+	},
+	"module": {
+		"type": "commonjs"
+	}
+}
