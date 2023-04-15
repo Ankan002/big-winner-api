@@ -26,7 +26,7 @@ export const startServer = () => {
 		});
 	});
 
-	app.use(authRouter);
+	app.use("/api/auth", authRouter);
 
 	app.listen(PORT, () => logger.info(`App is running at PORT: ${PORT}`));
 };
