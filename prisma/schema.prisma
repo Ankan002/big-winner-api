@@ -6,3 +6,35 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+model Admin {
+  id         String   @id @default(uuid())
+  email      String   @unique
+  name       String
+  password   String
+  approved   Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password      String
+  username      String   @unique
+  mobile_number String   @unique
+  disabled      Boolean  @default(false)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  Profile       Profile?
+}
+
+model Profile {
+  id         String   @id @default(uuid())
+  name       String
+  avatar     String
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
