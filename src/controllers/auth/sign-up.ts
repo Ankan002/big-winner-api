@@ -3,7 +3,7 @@ import { getPrismaClient } from "utils/get-prisma-client";
 import { genSalt, hash } from "bcrypt";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
-import { Prisma } from ".prisma/client";
+import { Prisma, User } from ".prisma/client";
 import { v4 as uuidv4 } from "uuid";
 
 const RequestBodySchema = z.object({
@@ -20,6 +20,7 @@ const RequestBodySchema = z.object({
 		.string()
 		.min(10, { message: "A 10 digit mobile number is required" })
 		.max(10, { message: "A 10 digit mobile number is required" }),
+	refer_code: z.string().uuid({ message: "A referral code should be UUID" }).optional(),
 });
 
 export const signUp = async (req: Request, res: Response) => {
@@ -36,6 +37,23 @@ export const signUp = async (req: Request, res: Response) => {
 	const prismaInstance = getPrismaClient();
 
 	try {
+		let referred_by: User | null = null;
+
+		if (requestBody.refer_code) {
+			referred_by = await prismaInstance.user.findUnique({
+				where: {
+					refer_code: requestBody.refer_code,
+				},
+			});
+
+			if (!referred_by) {
+				return res.status(400).json({
+					success: false,
+					error: "Invalid refer code please check it once, also you can sign up without a refer code",
+				});
+			}
+		}
+
 		const encryptionSalt = await genSalt(10);
 
 		const hashedPassword = await hash(requestBody.password, encryptionSalt);
@@ -57,6 +75,15 @@ export const signUp = async (req: Request, res: Response) => {
 				userId: user.id,
 			},
 		});
+
+		if (referred_by) {
+			await prismaInstance.referral.create({
+				data: {
+					referred_by_id: referred_by.id,
+					referred_to_id: user.id,
+				},
+			});
+		}
 
 		const jwtData = {
 			user: {
