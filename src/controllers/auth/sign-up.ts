@@ -4,6 +4,7 @@ import { genSalt, hash } from "bcrypt";
 import { z } from "zod";
 import jwt from "jsonwebtoken";
 import { Prisma } from ".prisma/client";
+import { v4 as uuidv4 } from "uuid";
 
 const RequestBodySchema = z.object({
 	email: z.string().email({ message: "Enter a valid email address" }),
@@ -45,6 +46,7 @@ export const signUp = async (req: Request, res: Response) => {
 				password: hashedPassword,
 				mobile_number: requestBody.mobile_number,
 				username: requestBody.email.split("@")[0] + "_atu",
+				refer_code: uuidv4(),
 			},
 		});
 
@@ -71,17 +73,9 @@ export const signUp = async (req: Request, res: Response) => {
 		});
 	} catch (error) {
 		if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-			let errorString;
-
-			if (error.meta && error.meta["target"] === "User_email_key")
-				errorString = "An account with this email already exists";
-			else if (error.meta && error.meta["target"] === "User_mobile_number_key")
-				errorString = "An account with this mobile number already exists";
-			else errorString = error.cause ?? error.message;
-
 			return res.status(400).json({
 				success: false,
-				error: errorString,
+				error: "Either an user with same email or mobile number already exists",
 			});
 		}
 
