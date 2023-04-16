@@ -3,6 +3,7 @@ import cors from "cors";
 import fileUpload from "express-fileupload";
 import { logger } from "utils/logger";
 import { morganConfig } from "middlewares/morgan";
+import { authRouter } from "routes/auth";
 
 export const startServer = () => {
 	const app = express();
@@ -24,6 +25,8 @@ export const startServer = () => {
 			message: "Welcome to Big Winner API...",
 		});
 	});
+
+	app.use("/api/auth", authRouter);
 
 	app.listen(PORT, () => logger.info(`App is running at PORT: ${PORT}`));
 };
