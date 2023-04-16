@@ -3,8 +3,10 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  // Set this to foreignKeys if you are not using planet scale.
+  relationMode = "prisma"
 }
 
 model Admin {
@@ -18,14 +20,15 @@ model Admin {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  email         String   @unique
+  id            String    @id @default(uuid())
+  email         String    @unique
   password      String
-  username      String   @unique
-  mobile_number String   @unique
-  disabled      Boolean  @default(false)
-  created_at    DateTime @default(now())
-  updated_at    DateTime @updatedAt
+  username      String    @unique
+  mobile_number String    @unique
+  refer_code    String    @unique
+  disabled      Boolean   @default(false)
+  created_at    DateTime  @default(now())
+  updated_at    DateTime  @updatedAt
   Profile       Profile?
 }
 
