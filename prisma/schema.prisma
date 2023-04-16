@@ -3,41 +3,51 @@ generator client {
 }
 
 datasource db {
-  provider     = "mysql"
-  url          = env("DATABASE_URL")
-  // Set this to foreignKeys if you are not using planet scale.
-  relationMode = "prisma"
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model Admin {
-  id         String   @id @default(uuid())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   email      String   @unique
   name       String
   password   String
   approved   Boolean  @default(false)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @map("createdAt")
+  updated_at DateTime @updatedAt @map("updatedAt")
 }
 
 model User {
-  id            String    @id @default(uuid())
-  email         String    @unique
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  email         String     @unique
   password      String
-  username      String    @unique
-  mobile_number String    @unique
-  refer_code    String    @unique
-  disabled      Boolean   @default(false)
-  created_at    DateTime  @default(now())
-  updated_at    DateTime  @updatedAt
-  Profile       Profile?
+  username      String     @unique
+  mobile_number String     @unique
+  refer_code    String     @unique
+  disabled      Boolean    @default(false)
+  created_at    DateTime   @default(now()) @map("createdAt")
+  updated_at    DateTime   @updatedAt @map("updatedAt")
+  profile       Profile?
+  referrals     Referral[] @relation("referred_by")
+  reffered_by   Referral?  @relation("referred_to")
+}
+
+model Referral {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  referred_by    User     @relation("referred_by", fields: [referred_by_id], references: [id])
+  referred_by_id String   @db.ObjectId
+  referred_to    User     @relation("referred_to", fields: [referred_to_id], references: [id])
+  referred_to_id String   @unique @db.ObjectId
+  created_at     DateTime @default(now()) @map("createdAt")
+  updated_at     DateTime @updatedAt @map("updatedAt")
 }
 
 model Profile {
-  id         String   @id @default(uuid())
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   avatar     String
   user       User     @relation(fields: [userId], references: [id])
-  userId     String   @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  userId     String   @unique @db.ObjectId
+  created_at DateTime @default(now()) @map("createdAt")
+  updated_at DateTime @updatedAt @map("updatedAt")
 }
