@@ -1,14 +1,15 @@
 import { Request, Response } from "express";
+import { getMailgunClient } from "utils/get-mailgun-client";
 import { getPrismaClient } from "utils/get-prisma-client";
 import { logger } from "utils/logger";
 
-export const getUser = async (req: Request, res: Response) => {
+export const getOtp = async (req: Request, res: Response) => {
 	const user = req.user;
 
 	if (!user) {
 		return res.status(400).json({
 			success: false,
-			error: "User not found!!",
+			error: "No User Found",
 		});
 	}
 
@@ -21,32 +22,35 @@ export const getUser = async (req: Request, res: Response) => {
 			},
 			select: {
 				id: true,
-				email: true,
-				mobile_number: true,
-				username: true,
-				email_verified: true,
-				profile: {
-					select: {
-						name: true,
-						avatar: true,
-					},
-				},
-				refer_code: true,
 			},
 		});
 
 		if (!retrievedUser) {
 			return res.status(400).json({
 				success: false,
-				error: "User not found!!",
+				error: "No User Found",
 			});
 		}
 
+		const otp = new Array(6)
+			.fill(0)
+			.map(() => Math.floor(Math.random() * 10).toString())
+			.join("");
+
+		const mailgunClient = getMailgunClient();
+
+		await mailgunClient.messages.create(process.env["MAILGUN_DOMAIN"] ?? "", {
+			from: `OTP Sender <support@${process.env["MAILGUN_DOMAIN"] ?? ""}>`,
+			to: [user.email],
+			subject: "Email Verfication OTP",
+			html: `
+				<p>OTP to verify your email id is:</p>
+				<h1>${otp}</h1>
+			`,
+		});
+
 		return res.status(200).json({
 			success: true,
-			data: {
-				user: retrievedUser,
-			},
 		});
 	} catch (error) {
 		if (error instanceof Error) {
