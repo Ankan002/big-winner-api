@@ -10,17 +10,20 @@ const RequestBodySchema = z.object({
 	email: z.string().email({ message: "Enter a valid email address" }),
 	name: z
 		.string()
+		.trim()
 		.min(3, { message: "Name should be at least 3 characters long" })
 		.max(80, { message: "Name can be at max 80 characters long" }),
 	password: z
 		.string()
+		.trim()
 		.min(8, { message: "Password should be at least 8 characters long" })
 		.max(30, { message: "Password can be at max 30 characters long" }),
 	mobile_number: z
 		.string()
+		.trim()
 		.min(10, { message: "A 10 digit mobile number is required" })
 		.max(10, { message: "A 10 digit mobile number is required" }),
-	refer_code: z.string().uuid({ message: "A referral code should be UUID" }).optional(),
+	refer_code: z.string().uuid({ message: "A referral code should be UUID" }).trim().optional(),
 });
 
 export const signUp = async (req: Request, res: Response) => {
@@ -42,7 +45,7 @@ export const signUp = async (req: Request, res: Response) => {
 		if (requestBody.refer_code) {
 			referred_by = await prismaInstance.user.findUnique({
 				where: {
-					refer_code: requestBody.refer_code,
+					refer_code: requestBody.refer_code.trim(),
 				},
 			});
 
@@ -56,21 +59,21 @@ export const signUp = async (req: Request, res: Response) => {
 
 		const encryptionSalt = await genSalt(10);
 
-		const hashedPassword = await hash(requestBody.password, encryptionSalt);
+		const hashedPassword = await hash(requestBody.password.trim(), encryptionSalt);
 
 		const user = await prismaInstance.user.create({
 			data: {
-				email: requestBody.email,
+				email: requestBody.email.trim(),
 				password: hashedPassword,
-				mobile_number: requestBody.mobile_number,
-				username: requestBody.email.split("@")[0] + "_atu",
+				mobile_number: requestBody.mobile_number.trim(),
+				username: requestBody.email.trim().split("@")[0] + "_atu",
 				refer_code: uuidv4(),
 			},
 		});
 
 		await prismaInstance.profile.create({
 			data: {
-				name: requestBody.name,
+				name: requestBody.name.trim(),
 				avatar: `https://api.dicebear.com/5.x/avataaars/png?seed=${user.username}`,
 				userId: user.id,
 			},
