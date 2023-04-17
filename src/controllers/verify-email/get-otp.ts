@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getMailgunClient } from "utils/get-mailgun-client";
 import { getPrismaClient } from "utils/get-prisma-client";
+import { getRedisClient } from "utils/get-redis-client";
 import { logger } from "utils/logger";
 
 export const getOtp = async (req: Request, res: Response) => {
@@ -48,6 +49,14 @@ export const getOtp = async (req: Request, res: Response) => {
 				<h1>${otp}</h1>
 			`,
 		});
+
+		const redisClient = getRedisClient();
+
+		// TODO: Check if there's a better way to connect.
+		await redisClient.connect();
+
+		await redisClient.hSet(user.email, "otp", otp);
+		await redisClient.expire(user.email, 600);
 
 		return res.status(200).json({
 			success: true,
