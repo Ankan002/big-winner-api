@@ -44,7 +44,7 @@ export const getUser = async (req: Request, res: Response) => {
 		return res.status(200).json({
 			success: true,
 			data: {
-				profile: retrievedUser,
+				user: retrievedUser,
 			},
 		});
 	} catch (error) {
