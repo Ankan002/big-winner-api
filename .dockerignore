@@ -1,0 +1,16 @@
+node_modules
+
+build
+dist
+
+.DS_Store
+.idea
+.vscode
+
+.env
+.env.development
+.env.production
+
+Dockerfile
+docker-compose.yml
+.dockerignore
