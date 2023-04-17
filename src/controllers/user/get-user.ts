@@ -30,29 +30,7 @@ export const getUser = async (req: Request, res: Response) => {
 						avatar: true,
 					},
 				},
-				referrals: {
-					select: {
-						referred_by: {
-							select: {
-								email: true,
-								profile: {
-									select: {
-										name: true,
-									},
-								},
-							},
-						},
-					},
-				},
-				reffered_by: {
-					select: {
-						referred_by: {
-							select: {
-								email: true,
-							},
-						},
-					},
-				},
+				refer_code: true,
 			},
 		});
 
