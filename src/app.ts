@@ -5,6 +5,7 @@ import { logger } from "utils/logger";
 import { morganConfig } from "middlewares/morgan";
 import { authRouter } from "routes/auth";
 import { userRouter } from "routes/user";
+import { profileRouter } from "routes/profile";
 
 export const startServer = () => {
 	const app = express();
@@ -29,6 +30,7 @@ export const startServer = () => {
 
 	app.use("/api/auth", authRouter);
 	app.use("/api/user", userRouter);
+	app.use("/api/profile", profileRouter);
 
 	app.listen(PORT, () => logger.info(`App is running at PORT: ${PORT}`));
 };
