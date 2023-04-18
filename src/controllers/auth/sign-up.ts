@@ -68,6 +68,7 @@ export const signUp = async (req: Request, res: Response) => {
 				mobile_number: requestBody.mobile_number.trim(),
 				username: requestBody.email.trim().split("@")[0] + "_atu",
 				refer_code: uuidv4(),
+				referred_by_id: referred_by ? referred_by.id : null,
 			},
 		});
 
@@ -78,15 +79,6 @@ export const signUp = async (req: Request, res: Response) => {
 				userId: user.id,
 			},
 		});
-
-		if (referred_by) {
-			await prismaInstance.referral.create({
-				data: {
-					referred_by_id: referred_by.id,
-					referred_to_id: user.id,
-				},
-			});
-		}
 
 		const jwtData = {
 			user: {

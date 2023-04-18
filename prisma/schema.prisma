@@ -18,29 +18,20 @@ model Admin {
 }
 
 model User {
-  id             String     @id @default(auto()) @map("_id") @db.ObjectId
-  email          String     @unique
-  password       String
-  username       String     @unique
-  mobile_number  String     @unique
-  refer_code     String     @unique
-  disabled       Boolean    @default(false)
-  email_verified Boolean    @default(false)
-  created_at     DateTime   @default(now()) @map("createdAt")
-  updated_at     DateTime   @updatedAt @map("updatedAt")
-  profile        Profile?
-  referrals      Referral[] @relation("referred_by")
-  reffered_by    Referral?  @relation("referred_to")
-}
-
-model Referral {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  referred_by    User     @relation("referred_by", fields: [referred_by_id], references: [id])
-  referred_by_id String   @db.ObjectId
-  referred_to    User     @relation("referred_to", fields: [referred_to_id], references: [id])
-  referred_to_id String   @unique @db.ObjectId
+  email          String   @unique
+  password       String
+  username       String   @unique
+  mobile_number  String   @unique
+  refer_code     String   @unique
+  disabled       Boolean  @default(false)
+  email_verified Boolean  @default(false)
+  referred_by_id String?  @db.ObjectId
+  referred_by    User?    @relation("referred_by", fields: [referred_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  referred_to    User[]   @relation("referred_by")
   created_at     DateTime @default(now()) @map("createdAt")
   updated_at     DateTime @updatedAt @map("updatedAt")
+  profile        Profile?
 }
 
 model Profile {
