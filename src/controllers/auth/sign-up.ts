@@ -72,13 +72,20 @@ export const signUp = async (req: Request, res: Response) => {
 			},
 		});
 
-		await prismaInstance.profile.create({
-			data: {
-				name: requestBody.name.trim(),
-				avatar: `https://api.dicebear.com/5.x/avataaars/png?seed=${user.username}`,
-				userId: user.id,
-			},
-		});
+		await Promise.all([
+			prismaInstance.profile.create({
+				data: {
+					name: requestBody.name.trim(),
+					avatar: `https://api.dicebear.com/5.x/avataaars/png?seed=${user.username}`,
+					userId: user.id,
+				},
+			}),
+			prismaInstance.wallet.create({
+				data: {
+					userId: user.id,
+				},
+			}),
+		]);
 
 		const jwtData = {
 			user: {
