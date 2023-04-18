@@ -24,6 +24,7 @@ export const getUser = async (req: Request, res: Response) => {
 				email: true,
 				mobile_number: true,
 				username: true,
+				email_verified: true,
 				profile: {
 					select: {
 						name: true,
