@@ -32,6 +32,7 @@ model User {
   created_at     DateTime @default(now()) @map("createdAt")
   updated_at     DateTime @updatedAt @map("updatedAt")
   profile        Profile?
+  Wallet         Wallet?
 }
 
 model Profile {
@@ -42,4 +43,14 @@ model Profile {
   userId     String   @unique @db.ObjectId
   created_at DateTime @default(now()) @map("createdAt")
   updated_at DateTime @updatedAt @map("updatedAt")
+}
+
+model Wallet {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  current_balance BigInt   @default(0)
+  bonus_balance   BigInt   @default(0)
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String   @unique @db.ObjectId
+  created_at      DateTime @default(now()) @map("createdAt")
+  updated_at      DateTime @updatedAt @map("updatedAt")
 }
