@@ -7,6 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum TransactionType {
+  deposit
+  bonus
+  reward
+  withdrawl
+}
+
 model Admin {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   email      String   @unique
@@ -18,20 +25,22 @@ model Admin {
 }
 
 model User {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  email          String   @unique
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  email          String       @unique
   password       String
-  username       String   @unique
-  mobile_number  String   @unique
-  refer_code     String   @unique
-  disabled       Boolean  @default(false)
-  email_verified Boolean  @default(false)
-  referred_by_id String?  @db.ObjectId
-  referred_by    User?    @relation("referred_by", fields: [referred_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  referred_to    User[]   @relation("referred_by")
-  created_at     DateTime @default(now()) @map("createdAt")
-  updated_at     DateTime @updatedAt @map("updatedAt")
+  username       String       @unique
+  mobile_number  String       @unique
+  refer_code     String       @unique
+  disabled       Boolean      @default(false)
+  email_verified Boolean      @default(false)
+  referred_by_id String?      @db.ObjectId
+  referred_by    User?        @relation("referred_by", fields: [referred_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  referred_to    User[]       @relation("referred_by")
+  created_at     DateTime     @default(now()) @map("createdAt")
+  updated_at     DateTime     @updatedAt @map("updatedAt")
   profile        Profile?
+  wallet         Wallet?
+  transaction    Transaction?
 }
 
 model Profile {
@@ -42,4 +51,24 @@ model Profile {
   userId     String   @unique @db.ObjectId
   created_at DateTime @default(now()) @map("createdAt")
   updated_at DateTime @updatedAt @map("updatedAt")
+}
+
+model Wallet {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  current_balance BigInt   @default(0)
+  bonus_balance   BigInt   @default(0)
+  user            User     @relation(fields: [userId], references: [id])
+  userId          String   @unique @db.ObjectId
+  created_at      DateTime @default(now()) @map("createdAt")
+  updated_at      DateTime @updatedAt @map("updatedAt")
+}
+
+model Transaction {
+  id               String          @id @default(auto()) @map("_id") @db.ObjectId
+  amount           BigInt
+  transaction_type TransactionType
+  user             User            @relation(fields: [userId], references: [id])
+  userId           String          @unique @db.ObjectId
+  created_at       DateTime        @default(now()) @map("createdAt")
+  updated_at       DateTime        @updatedAt @map("updatedAt")
 }
