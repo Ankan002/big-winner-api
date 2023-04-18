@@ -6,6 +6,7 @@ import { morganConfig } from "middlewares/morgan";
 import { authRouter } from "routes/auth";
 import { userRouter } from "routes/user";
 import { profileRouter } from "routes/profile";
+import { verifyEmailRouter } from "routes/verify-email";
 
 export const startServer = () => {
 	const app = express();
@@ -31,6 +32,7 @@ export const startServer = () => {
 	app.use("/api/auth", authRouter);
 	app.use("/api/user", userRouter);
 	app.use("/api/profile", profileRouter);
+	app.use("/api/verify-email", verifyEmailRouter);
 
 	app.listen(PORT, () => logger.info(`App is running at PORT: ${PORT}`));
 };
