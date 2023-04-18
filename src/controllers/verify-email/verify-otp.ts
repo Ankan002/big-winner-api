@@ -46,14 +46,14 @@ export const verifyOtp = async (req: Request, res: Response) => {
 			});
 		}
 
-		await redisClient.hDel(user.email, "otp");
-
 		if (otpSent !== requestBody.otp) {
 			return res.status(400).json({
 				success: false,
 				error: "Wrong OTP",
 			});
 		}
+
+		await redisClient.hDel(user.email, "otp");
 
 		await prismaInstance.user.update({
 			where: {
