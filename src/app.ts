@@ -8,6 +8,7 @@ import { userRouter } from "routes/user";
 import { profileRouter } from "routes/profile";
 import { verifyEmailRouter } from "routes/verify-email";
 import { walletRouter } from "routes/wallet";
+import { dailyLoginRouter } from "routes/daily-login";
 
 export const startServer = () => {
 	const app = express();
@@ -35,6 +36,7 @@ export const startServer = () => {
 	app.use("/api/profile", profileRouter);
 	app.use("/api/verify-email", verifyEmailRouter);
 	app.use("/api/wallet", walletRouter);
+	app.use("/api/daily-login", dailyLoginRouter);
 
 	app.listen(PORT, () => logger.info(`App is running at PORT: ${PORT}`));
 };
