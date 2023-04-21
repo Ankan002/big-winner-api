@@ -56,6 +56,7 @@ model Profile {
 
 model Wallet {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  winning_balance BigInt   @default(0)
   current_balance BigInt   @default(0)
   bonus_balance   BigInt   @default(0)
   user            User     @relation(fields: [userId], references: [id])
