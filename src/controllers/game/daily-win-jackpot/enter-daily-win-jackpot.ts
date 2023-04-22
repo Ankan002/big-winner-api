@@ -132,12 +132,22 @@ export const enterDailyWinJackpot = async (req: Request, res: Response) => {
 				userId: user.id,
 				dailyWinJackpotId: lotteryContest.id,
 			},
+			select: {
+				id: true,
+				dailyWinJackpotId: true,
+				userId: true,
+				token_amount: true,
+				picked_number: true,
+			},
 		});
 
-		await Promise.all([userWalletUpdationPromise, createTransactionPromise, createBetPromise]);
+		const [createdBet] = await Promise.all([createBetPromise, userWalletUpdationPromise, createTransactionPromise]);
 
 		return res.status(200).json({
 			success: true,
+			data: {
+				bet: createdBet,
+			},
 		});
 	} catch (error) {
 		if (error instanceof Error) {
