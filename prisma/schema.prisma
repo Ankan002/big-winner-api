@@ -12,6 +12,7 @@ enum TransactionType {
   deposit
   bonus
   reward
+  bet
   withdrawl
 }
 
@@ -96,7 +97,7 @@ model DailyLogin {
 model DailyWinJackpot {
   id                       String                  @id @default(auto()) @map("_id") @db.ObjectId
   status                   GameStatus              @default(open)
-  winning_number           Int
+  winning_number           Int?
   created_at               DateTime                @default(now()) @map("createdAt")
   updated_at               DateTime                @updatedAt @map("updatedAt")
   daily_win_jackpot_entry  DailyWinJackpotEntry[]

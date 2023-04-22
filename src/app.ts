@@ -11,7 +11,7 @@ import { walletRouter } from "routes/wallet";
 import { dailyLoginRouter } from "routes/daily-login";
 import { dailWinJackpotRouter } from "routes/game";
 
-export const startServer = () => {
+export const startServer = async () => {
 	const app = express();
 	const PORT = process.env["PORT"];
 
@@ -38,7 +38,7 @@ export const startServer = () => {
 	app.use("/api/verify-email", verifyEmailRouter);
 	app.use("/api/wallet", walletRouter);
 	app.use("/api/daily-login", dailyLoginRouter);
-	app.use("/api/game", dailWinJackpotRouter);
+	app.use("/api/game/daily-win-jackpot", dailWinJackpotRouter);
 
 	app.listen(PORT, () => logger.info(`App is running at PORT: ${PORT}`));
 };
