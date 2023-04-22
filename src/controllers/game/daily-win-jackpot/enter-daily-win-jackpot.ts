@@ -95,7 +95,7 @@ export const enterDailyWinJackpot = async (req: Request, res: Response) => {
 
 		const amountToBeDeductedFromBonusBalance =
 			Number(userWallet.bonus_balance) - requestBody.bet_amount < 0
-				? userWallet.bonus_balance
+				? Number(userWallet.bonus_balance)
 				: requestBody.bet_amount;
 
 		const amountToBeDeductedFromCurrentBalance =

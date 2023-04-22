@@ -1,12 +1,18 @@
-import { enterDailyWinJackpot, getCurrentDailyWinJackpotCurrentUserEntries } from "controllers/game";
+import {
+	enterDailyWinJackpot,
+	getCurrentDailyWinJackpotCurrentUserEntries,
+	increaseDailyWinJackpotBetAmount,
+} from "controllers/game";
 import { Router } from "express";
 import { isAuthenticated } from "middlewares/auth";
 
-export const dailWinJackpotRouter = Router();
+export const dailyWinJackpotRouter = Router();
 
-dailWinJackpotRouter.route("/enter-game").post(isAuthenticated, enterDailyWinJackpot);
+dailyWinJackpotRouter.route("/enter-game").post(isAuthenticated, enterDailyWinJackpot);
 
 // * A GET route to get all the entries of the logged in user in the ongoing game.
-dailWinJackpotRouter
+dailyWinJackpotRouter
 	.route("/user/get-current-entries")
 	.get(isAuthenticated, getCurrentDailyWinJackpotCurrentUserEntries);
+
+dailyWinJackpotRouter.route("/increase-bet").put(isAuthenticated, increaseDailyWinJackpotBetAmount);
