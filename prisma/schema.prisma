@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["jsonProtocol"]
 }
 
 datasource db {
@@ -11,7 +12,14 @@ enum TransactionType {
   deposit
   bonus
   reward
+  bet
   withdrawl
+}
+
+enum GameStatus {
+  open
+  evaluating
+  closed
 }
 
 model Admin {
@@ -25,23 +33,25 @@ model Admin {
 }
 
 model User {
-  id             String        @id @default(auto()) @map("_id") @db.ObjectId
-  email          String        @unique
-  password       String
-  username       String        @unique
-  mobile_number  String        @unique
-  refer_code     String        @unique
-  disabled       Boolean       @default(false)
-  email_verified Boolean       @default(false)
-  referred_by_id String?       @db.ObjectId
-  referred_by    User?         @relation("referred_by", fields: [referred_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  referred_to    User[]        @relation("referred_by")
-  created_at     DateTime      @default(now()) @map("createdAt")
-  updated_at     DateTime      @updatedAt @map("updatedAt")
-  profile        Profile?
-  wallet         Wallet?
-  transaction    Transaction[]
-  DailyLogin     DailyLogin[]
+  id                       String                  @id @default(auto()) @map("_id") @db.ObjectId
+  email                    String                  @unique
+  password                 String
+  username                 String                  @unique
+  mobile_number            String                  @unique
+  refer_code               String                  @unique
+  disabled                 Boolean                 @default(false)
+  email_verified           Boolean                 @default(false)
+  referred_by_id           String?                 @db.ObjectId
+  referred_by              User?                   @relation("referred_by", fields: [referred_by_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  referred_to              User[]                  @relation("referred_by")
+  created_at               DateTime                @default(now()) @map("createdAt")
+  updated_at               DateTime                @updatedAt @map("updatedAt")
+  profile                  Profile?
+  wallet                   Wallet?
+  transaction              Transaction[]
+  daily_login              DailyLogin[]
+  daily_win_jackpot_entry  DailyWinJackpotEntry[]
+  daily_win_jackpot_winner DailyWinJackpotWinner[]
 }
 
 model Profile {
@@ -82,4 +92,40 @@ model DailyLogin {
   date       String
   created_at DateTime @default(now()) @map("createdAt")
   updated_at DateTime @updatedAt @map("updatedAt")
+}
+
+model DailyWinJackpot {
+  id                        String                  @id @default(auto()) @map("_id") @db.ObjectId
+  status                    GameStatus              @default(open)
+  winning_number            Int?
+  created_at                DateTime                @default(now()) @map("createdAt")
+  updated_at                DateTime                @updatedAt @map("updatedAt")
+  daily_win_jackpot_entries DailyWinJackpotEntry[]
+  daily_win_jackpot_winners DailyWinJackpotWinner[]
+}
+
+model DailyWinJackpotEntry {
+  id                       String                  @id @default(auto()) @map("_id") @db.ObjectId
+  daily_win_jackpot        DailyWinJackpot         @relation(fields: [dailyWinJackpotId], references: [id])
+  dailyWinJackpotId        String                  @db.ObjectId
+  user                     User                    @relation(fields: [userId], references: [id])
+  userId                   String                  @db.ObjectId
+  token_amount             Int
+  picked_number            Int
+  created_at               DateTime                @default(now()) @map("createdAt")
+  updated_at               DateTime                @updatedAt @map("updatedAt")
+  daily_win_jackpot_winner DailyWinJackpotWinner[]
+}
+
+model DailyWinJackpotWinner {
+  id                String               @id @default(auto()) @map("_id") @db.ObjectId
+  daily_win_jackpot DailyWinJackpot      @relation(fields: [dailyWinJackpotId], references: [id])
+  dailyWinJackpotId String               @db.ObjectId
+  user              User                 @relation(fields: [userId], references: [id])
+  userId            String               @db.ObjectId
+  entry             DailyWinJackpotEntry @relation(fields: [entryId], references: [id])
+  entryId           String               @db.ObjectId
+  token_amount_won  Int
+  created_at        DateTime             @default(now()) @map("createdAt")
+  updated_at        DateTime             @updatedAt @map("updatedAt")
 }
