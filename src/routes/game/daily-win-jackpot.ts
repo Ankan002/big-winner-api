@@ -1,5 +1,6 @@
 import {
 	enterDailyWinJackpot,
+	findDailyWinJackpotWinners,
 	getCurrentDailyWinJackpotCurrentUserEntries,
 	increaseDailyWinJackpotBetAmount,
 } from "controllers/game";
@@ -15,4 +16,7 @@ dailyWinJackpotRouter
 	.route("/user/get-current-entries")
 	.get(isAuthenticated, getCurrentDailyWinJackpotCurrentUserEntries);
 
+// * A PUT route to increase bet of a logged in user.
 dailyWinJackpotRouter.route("/increase-bet").put(isAuthenticated, increaseDailyWinJackpotBetAmount);
+
+dailyWinJackpotRouter.route("/find-winner").post(findDailyWinJackpotWinners);
