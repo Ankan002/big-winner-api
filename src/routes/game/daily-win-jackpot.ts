@@ -2,6 +2,7 @@ import {
 	enterDailyWinJackpot,
 	findDailyWinJackpotWinners,
 	getCurrentDailyWinJackpotCurrentUserEntries,
+	getLastDailyWinJackpotResult,
 	increaseDailyWinJackpotBetAmount,
 } from "controllers/game";
 import { Router } from "express";
@@ -20,3 +21,5 @@ dailyWinJackpotRouter
 dailyWinJackpotRouter.route("/increase-bet").put(isAuthenticated, increaseDailyWinJackpotBetAmount);
 
 dailyWinJackpotRouter.route("/find-winner").post(findDailyWinJackpotWinners);
+
+dailyWinJackpotRouter.route("/last-game-result").get(isAuthenticated, getLastDailyWinJackpotResult);
