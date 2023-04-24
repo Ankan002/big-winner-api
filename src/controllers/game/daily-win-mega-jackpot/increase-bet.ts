@@ -8,7 +8,7 @@ const RequestBodySchema = z.object({
 	token_amount: z.number().min(1, { message: "Bet must be increased by at least 1" }),
 });
 
-export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Response) => {
+export const increaseDailyWinMegaJackpotBetAmount = async (req: Request, res: Response) => {
 	const user = req.user;
 
 	if (!user) {
@@ -32,13 +32,13 @@ export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Respon
 
 	try {
 		const [retrievedEntry, userWallet] = await Promise.all([
-			prismaClient.dailyWinJackpotEntry.findUnique({
+			prismaClient.dailyWinMegaJackpotEntry.findUnique({
 				where: {
 					id: requestBody.bet_id,
 				},
 				select: {
 					token_amount: true,
-					daily_win_jackpot: {
+					daily_win_mega_jackpot: {
 						select: {
 							status: true,
 						},
@@ -51,8 +51,8 @@ export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Respon
 					userId: user.id,
 				},
 				select: {
-					bonus_balance: true,
 					current_balance: true,
+					bonus_balance: true,
 				},
 			}),
 		]);
@@ -64,20 +64,6 @@ export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Respon
 			});
 		}
 
-		if (retrievedEntry.userId !== user.id) {
-			return res.status(401).json({
-				success: false,
-				error: "Access Denied!!",
-			});
-		}
-
-		if (retrievedEntry.daily_win_jackpot.status !== "open") {
-			return res.status(400).json({
-				success: false,
-				error: "The contest is not open",
-			});
-		}
-
 		if (!userWallet) {
 			return res.status(400).json({
 				success: false,
@@ -85,9 +71,23 @@ export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Respon
 			});
 		}
 
+		if (retrievedEntry.userId !== user.id) {
+			return res.status(401).json({
+				success: false,
+				error: "Access Denied!!",
+			});
+		}
+
+		if (retrievedEntry.daily_win_mega_jackpot.status !== "open") {
+			return res.status(400).json({
+				success: false,
+				error: "The contest is not open",
+			});
+		}
+
 		const amountOfBetCanBeIncreased = 100000 - retrievedEntry.token_amount;
 
-		if (amountOfBetCanBeIncreased < requestBody.token_amount) {
+		if (requestBody.token_amount > amountOfBetCanBeIncreased) {
 			return res.status(400).json({
 				success: false,
 				error: "Max bet that can be placed is 1,00,000 coins",
@@ -111,7 +111,7 @@ export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Respon
 				? (Number(userWallet.bonus_balance) - requestBody.token_amount) * -1
 				: 0;
 
-		const walletUpdationPromise = prismaClient.wallet.update({
+		const updateWalletPromise = prismaClient.wallet.update({
 			where: {
 				userId: user.id,
 			},
@@ -133,7 +133,7 @@ export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Respon
 			},
 		});
 
-		const updateEntryPromise = prismaClient.dailyWinJackpotEntry.update({
+		const updateEntryPromise = prismaClient.dailyWinMegaJackpotEntry.update({
 			where: {
 				id: requestBody.bet_id,
 			},
@@ -144,7 +144,7 @@ export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Respon
 			},
 		});
 
-		await Promise.all([walletUpdationPromise, createTransactionPromise, updateEntryPromise]);
+		await Promise.all([updateWalletPromise, createTransactionPromise, updateEntryPromise]);
 
 		return res.status(200).json({
 			success: true,
@@ -163,7 +163,7 @@ export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Respon
 
 		return res.status(500).json({
 			success: false,
-			error: "Internal Server Erro!!",
+			error: "Internal Server Error!!",
 		});
 	}
 };
