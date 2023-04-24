@@ -9,7 +9,7 @@ import { profileRouter } from "routes/profile";
 import { verifyEmailRouter } from "routes/verify-email";
 import { walletRouter } from "routes/wallet";
 import { dailyLoginRouter } from "routes/daily-login";
-import { dailyWinJackpotRouter } from "routes/game";
+import { dailyWinJackpotRouter, dailyWinMegaJackpotRouter } from "routes/game";
 
 export const startServer = async () => {
 	const app = express();
@@ -39,6 +39,7 @@ export const startServer = async () => {
 	app.use("/api/wallet", walletRouter);
 	app.use("/api/daily-login", dailyLoginRouter);
 	app.use("/api/game/daily-win-jackpot", dailyWinJackpotRouter);
+	app.use("/api/game/daily-win-mega-jackpot", dailyWinMegaJackpotRouter);
 
 	app.listen(PORT, () => logger.info(`App is running at PORT: ${PORT}`));
 };
