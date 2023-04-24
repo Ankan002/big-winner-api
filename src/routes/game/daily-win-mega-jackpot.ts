@@ -1,4 +1,8 @@
-import { enterDailyWinMegaJackpot, getCurrentDailyWinMegaJackpotCurrentUserEntries } from "controllers/game";
+import {
+	enterDailyWinMegaJackpot,
+	getCurrentDailyWinMegaJackpotCurrentUserEntries,
+	increaseDailyWinMegaJackpotBetAmount,
+} from "controllers/game";
 import { Router } from "express";
 import { isAuthenticated } from "middlewares/auth";
 
@@ -10,3 +14,6 @@ dailyWinMegaJackpotRouter.route("/enter-game").post(isAuthenticated, enterDailyW
 dailyWinMegaJackpotRouter
 	.route("/user/get-current-entries")
 	.get(isAuthenticated, getCurrentDailyWinMegaJackpotCurrentUserEntries);
+
+// * A PUT route to increase bet of a logged in user.
+dailyWinMegaJackpotRouter.route("/increase-bet").put(isAuthenticated, increaseDailyWinMegaJackpotBetAmount);
