@@ -43,6 +43,7 @@ export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Respon
 							status: true,
 						},
 					},
+					userId: true,
 				},
 			}),
 			prismaClient.wallet.findUnique({
@@ -60,6 +61,13 @@ export const increaseDailyWinJackpotBetAmount = async (req: Request, res: Respon
 			return res.status(400).json({
 				success: false,
 				error: "No entry found!!",
+			});
+		}
+
+		if (retrievedEntry.userId !== user.id) {
+			return res.status(401).json({
+				success: false,
+				error: "Access Denied!!",
 			});
 		}
 
