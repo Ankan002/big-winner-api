@@ -82,6 +82,13 @@ export const increaseDailyWinMegaJackpotBetAmount = async (req: Request, res: Re
 		if (requestBody.token_amount > amountOfBetCanBeIncreased) {
 			return res.status(400).json({
 				success: false,
+				error: "Max bet that can be placed is 1,00,000 coins",
+			});
+		}
+
+		if (requestBody.token_amount > userWallet.bonus_balance + userWallet.current_balance) {
+			return res.status(400).json({
+				success: false,
 				error: "Not enough balance",
 			});
 		}
@@ -101,8 +108,12 @@ export const increaseDailyWinMegaJackpotBetAmount = async (req: Request, res: Re
 				userId: user.id,
 			},
 			data: {
-				current_balance: amountToBeDeductedFromCurrentBalance,
-				bonus_balance: amountToBeDeductedFromBonusBalance,
+				current_balance: {
+					decrement: amountToBeDeductedFromCurrentBalance,
+				},
+				bonus_balance: {
+					decrement: amountToBeDeductedFromBonusBalance,
+				},
 			},
 		});
 

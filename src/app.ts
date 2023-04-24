@@ -39,7 +39,7 @@ export const startServer = async () => {
 	app.use("/api/wallet", walletRouter);
 	app.use("/api/daily-login", dailyLoginRouter);
 	app.use("/api/game/daily-win-jackpot", dailyWinJackpotRouter);
-	app.use("/api/game/daili-win-mega-jackpot", dailyWinMegaJackpotRouter);
+	app.use("/api/game/daily-win-mega-jackpot", dailyWinMegaJackpotRouter);
 
 	app.listen(PORT, () => logger.info(`App is running at PORT: ${PORT}`));
 };

@@ -10,8 +10,8 @@ const RequestBodySchema = z.object({
 		.max(100000, { message: "Place at most 1,00,000 coins as bet" }),
 	bet_number: z
 		.number()
-		.min(0, { message: "You can place bet from 0 - 9" })
-		.max(9, { message: "You can place bet from 0 - 9" }),
+		.min(0, { message: "You can place bet from 0 - 25" })
+		.max(25, { message: "You can place bet from 0 - 25" }),
 });
 
 export const enterDailyWinMegaJackpot = async (req: Request, res: Response) => {
