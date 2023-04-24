@@ -2,6 +2,7 @@ import {
 	enterDailyWinMegaJackpot,
 	findDailyWinMegaJackpotWinners,
 	getCurrentDailyWinMegaJackpotCurrentUserEntries,
+	getLastDailyWinMegaJackpotResult,
 	increaseDailyWinMegaJackpotBetAmount,
 } from "controllers/game";
 import { Router } from "express";
@@ -20,3 +21,5 @@ dailyWinMegaJackpotRouter
 dailyWinMegaJackpotRouter.route("/increase-bet").put(isAuthenticated, increaseDailyWinMegaJackpotBetAmount);
 
 dailyWinMegaJackpotRouter.route("/find-winner").post(findDailyWinMegaJackpotWinners);
+
+dailyWinMegaJackpotRouter.route("/last-game-result").get(isAuthenticated, getLastDailyWinMegaJackpotResult);

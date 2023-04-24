@@ -36,7 +36,7 @@ export const findDailyWinMegaJackpotWinners = async (req: Request, res: Response
 			},
 			select: {
 				id: true,
-				daily_win_mega_jackpot_entry: {
+				daily_win_mega_jackpot_entries: {
 					select: {
 						id: true,
 						userId: true,
@@ -67,7 +67,7 @@ export const findDailyWinMegaJackpotWinners = async (req: Request, res: Response
 			},
 		});
 
-		const betsPlaced = currentLottery.daily_win_mega_jackpot_entry;
+		const betsPlaced = currentLottery.daily_win_mega_jackpot_entries;
 
 		const totalBetsPlacedOnEachNumbers: Record<number, number> = {};
 
