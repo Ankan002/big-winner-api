@@ -6,7 +6,7 @@ export const getLastDailyWinJackpotResult = async (req: Request, res: Response) 
 	const prismaClient = getPrismaClient();
 
 	try {
-		const lastDailyWinJackPotResult = await prismaClient.dailyWinJackpot.findMany({
+		const lastDailyWinJackPotResult = await prismaClient.dailyWinJackpot.findFirst({
 			where: {
 				status: "closed",
 			},
@@ -39,8 +39,7 @@ export const getLastDailyWinJackpotResult = async (req: Request, res: Response) 
 		return res.status(200).json({
 			success: true,
 			data: {
-				last_daily_win_jackpot_result:
-					lastDailyWinJackPotResult.length > 0 ? lastDailyWinJackPotResult[0] : null,
+				last_daily_win_jackpot_result: lastDailyWinJackPotResult,
 			},
 		});
 	} catch (error) {
