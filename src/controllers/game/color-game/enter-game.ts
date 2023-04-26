@@ -44,11 +44,115 @@ export const enterColorGame = async (req: Request, res: Response) => {
 				id: true,
 				status: true,
 			},
+			orderBy: {
+				created_at: "desc",
+			},
 		});
 
-		if(!lotteryContest) {
-			
+		if (!lotteryContest) {
+			return res.status(400).json({
+				success: false,
+				error: "No game is running currently",
+			});
 		}
+
+		const earlierBet = await prismaClient.colorGameEntry.findFirst({
+			where: {
+				userId: user.id,
+				colorGameId: lotteryContest.id,
+			},
+			select: {
+				id: true,
+			},
+		});
+
+		if (earlierBet) {
+			return res.status(400).json({
+				success: false,
+				error: "You have already placed a bet, you can update that bet but cannot place another one",
+			});
+		}
+
+		const userWallet = await prismaClient.wallet.findUnique({
+			where: {
+				userId: user.id,
+			},
+			select: {
+				bonus_balance: true,
+				current_balance: true,
+			},
+		});
+
+		if (!userWallet) {
+			return res.status(400).json({
+				success: false,
+				error: "No wallet found for this user",
+			});
+		}
+
+		if (requestBody.bet_amount > Number(userWallet.bonus_balance) + Number(userWallet.current_balance)) {
+			return res.status(400).json({
+				success: false,
+				error: "Not enough wallet balance",
+			});
+		}
+
+		const amountToBeDeductedFromBonusBalance =
+			Number(userWallet.bonus_balance) - requestBody.bet_amount < 0
+				? Number(userWallet.bonus_balance)
+				: requestBody.bet_amount;
+
+		const amountToBeDeductedFromCurrentBalance =
+			Number(userWallet.bonus_balance) - requestBody.bet_amount < 0
+				? Number(userWallet.bonus_balance) - requestBody.bet_amount * -1
+				: 0;
+
+		const userWalletUpdationPromise = prismaClient.wallet.update({
+			where: {
+				userId: user.id,
+			},
+			data: {
+				bonus_balance: {
+					decrement: amountToBeDeductedFromBonusBalance,
+				},
+				current_balance: {
+					decrement: amountToBeDeductedFromCurrentBalance,
+				},
+			},
+		});
+
+		const createTransactionPromise = prismaClient.transaction.create({
+			data: {
+				userId: user.id,
+				amount: requestBody.bet_amount,
+				transaction_type: "bet",
+			},
+		});
+
+		const createBetPromise = prismaClient.colorGameEntry.create({
+			data: {
+				userId: user.id,
+				picked_color: requestBody.bet_color,
+				token_amount: requestBody.bet_amount,
+				colorGameId: lotteryContest.id,
+			},
+			select: {
+				id: true,
+				colorGameId: true,
+				userId: true,
+				token_amount: true,
+				picked_color: true,
+			},
+		});
+
+		const [createdBet] = await Promise.all([createBetPromise, createTransactionPromise, userWalletUpdationPromise]);
+
+		return res.status(200).json({
+			success: true,
+			data: {
+				bet: createdBet,
+			},
+		});
 	} catch (error) {
 		if (error instanceof Error) {
 			logger.error(error.message);
