@@ -22,6 +22,12 @@ enum GameStatus {
   closed
 }
 
+enum ColorGameChoice {
+  red
+  blue
+  green
+}
+
 model Admin {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   email      String   @unique
@@ -54,6 +60,8 @@ model User {
   daily_win_jackpot_winner      DailyWinJackpotWinner[]
   daily_win_mega_jackpot_entry  DailyWinMegaJackpotEntry[]
   daily_win_mega_jackpot_winner DailyWinMegaJackpotWinner[]
+  color_game_entry              ColorGameEntry[]
+  color_game_winner             ColorGameWinner[]
 }
 
 model Profile {
@@ -107,15 +115,15 @@ model DailyWinJackpot {
 }
 
 model DailyWinJackpotEntry {
-  id                       String                  @id @default(auto()) @map("_id") @db.ObjectId
-  daily_win_jackpot        DailyWinJackpot         @relation(fields: [dailyWinJackpotId], references: [id])
-  dailyWinJackpotId        String                  @db.ObjectId
-  user                     User                    @relation(fields: [userId], references: [id])
-  userId                   String                  @db.ObjectId
-  token_amount             Int
-  picked_number            Int
-  created_at               DateTime                @default(now()) @map("createdAt")
-  updated_at               DateTime                @updatedAt @map("updatedAt")
+  id                        String                  @id @default(auto()) @map("_id") @db.ObjectId
+  daily_win_jackpot         DailyWinJackpot         @relation(fields: [dailyWinJackpotId], references: [id])
+  dailyWinJackpotId         String                  @db.ObjectId
+  user                      User                    @relation(fields: [userId], references: [id])
+  userId                    String                  @db.ObjectId
+  token_amount              Int
+  picked_number             Int
+  created_at                DateTime                @default(now()) @map("createdAt")
+  updated_at                DateTime                @updatedAt @map("updatedAt")
   daily_win_jackpot_winners DailyWinJackpotWinner[]
 }
 
@@ -133,25 +141,25 @@ model DailyWinJackpotWinner {
 }
 
 model DailyWinMegaJackpot {
-  id                            String                      @id @default(auto()) @map("_id") @db.ObjectId
-  status                        GameStatus                  @default(open)
-  winning_number                Int?
-  created_at                    DateTime                    @default(now()) @map("createdAt")
-  updated_at                    DateTime                    @updatedAt @map("updatedAt")
-  daily_win_mega_jackpot_entries  DailyWinMegaJackpotEntry[]
+  id                             String                      @id @default(auto()) @map("_id") @db.ObjectId
+  status                         GameStatus                  @default(open)
+  winning_number                 Int?
+  created_at                     DateTime                    @default(now()) @map("createdAt")
+  updated_at                     DateTime                    @updatedAt @map("updatedAt")
+  daily_win_mega_jackpot_entries DailyWinMegaJackpotEntry[]
   daily_win_mega_jackpot_winners DailyWinMegaJackpotWinner[]
 }
 
 model DailyWinMegaJackpotEntry {
-  id                            String                      @id @default(auto()) @map("_id") @db.ObjectId
-  daily_win_mega_jackpot        DailyWinMegaJackpot         @relation(fields: [dailyWinJackpotId], references: [id])
-  dailyWinJackpotId             String                      @db.ObjectId
-  user                          User                        @relation(fields: [userId], references: [id])
-  userId                        String                      @db.ObjectId
-  token_amount                  Int
-  picked_number                 Int
-  created_at                    DateTime                    @default(now()) @map("createdAt")
-  updated_at                    DateTime                    @updatedAt @map("updatedAt")
+  id                             String                      @id @default(auto()) @map("_id") @db.ObjectId
+  daily_win_mega_jackpot         DailyWinMegaJackpot         @relation(fields: [dailyWinJackpotId], references: [id])
+  dailyWinJackpotId              String                      @db.ObjectId
+  user                           User                        @relation(fields: [userId], references: [id])
+  userId                         String                      @db.ObjectId
+  token_amount                   Int
+  picked_number                  Int
+  created_at                     DateTime                    @default(now()) @map("createdAt")
+  updated_at                     DateTime                    @updatedAt @map("updatedAt")
   daily_win_mega_jackpot_winners DailyWinMegaJackpotWinner[]
 }
 
@@ -166,4 +174,40 @@ model DailyWinMegaJackpotWinner {
   token_amount_won       Int
   created_at             DateTime                 @default(now()) @map("createdAt")
   updated_at             DateTime                 @updatedAt @map("updatedAt")
+}
+
+model ColorGame {
+  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+  status             GameStatus        @default(open)
+  winning_color      ColorGameChoice?
+  created_at         DateTime          @default(now()) @map("createdAt")
+  updated_at         DateTime          @updatedAt @map("updatedAt")
+  color_game_entries ColorGameEntry[]
+  color_game_winners ColorGameWinner[]
+}
+
+model ColorGameEntry {
+  id                 String            @id @default(auto()) @map("_id") @db.ObjectId
+  picked_color       ColorGameChoice
+  token_amount       Int
+  color_game         ColorGame         @relation(fields: [colorGameId], references: [id])
+  colorGameId        String            @db.ObjectId
+  user               User              @relation(fields: [userId], references: [id])
+  userId             String            @db.ObjectId
+  created_at         DateTime          @default(now()) @map("createdAt")
+  updated_at         DateTime          @updatedAt @map("updatedAt")
+  color_game_winners ColorGameWinner[]
+}
+
+model ColorGameWinner {
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  user             User           @relation(fields: [userId], references: [id])
+  userId           String         @db.ObjectId
+  color_game       ColorGame      @relation(fields: [colorGameId], references: [id])
+  colorGameId      String         @db.ObjectId
+  color_game_entry ColorGameEntry @relation(fields: [colorGameEntryId], references: [id])
+  colorGameEntryId String         @db.ObjectId
+  token_amount_won Int
+  created_at       DateTime       @default(now()) @map("createdAt")
+  updated_at       DateTime       @updatedAt @map("updatedAt")
 }
