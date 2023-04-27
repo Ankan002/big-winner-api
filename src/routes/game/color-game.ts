@@ -1,4 +1,9 @@
-import { enterColorGame, getCurrentColorGameCurrentUserEntry, increaseColorGameBetAmount } from "controllers/game";
+import {
+	enterColorGame,
+	findColorGameWinners,
+	getCurrentColorGameCurrentUserEntry,
+	increaseColorGameBetAmount,
+} from "controllers/game";
 import { Router } from "express";
 import { isAuthenticated } from "middlewares/auth";
 
@@ -11,3 +16,5 @@ colorGameRouter.route("/user/get-current-entry").get(isAuthenticated, getCurrent
 
 // * A PUT route to increase bet of a logged in user.
 colorGameRouter.route("/increase-bet").put(isAuthenticated, increaseColorGameBetAmount);
+
+colorGameRouter.route("/find-winner").post(findColorGameWinners);
