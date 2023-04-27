@@ -3,6 +3,7 @@ import {
 	findColorGameWinners,
 	getCurrentColorGameCurrentUserEntry,
 	getLastColorGameResult,
+	getLastColorGames,
 	increaseColorGameBetAmount,
 } from "controllers/game";
 import { Router } from "express";
@@ -22,4 +23,4 @@ colorGameRouter.route("/find-winner").post(findColorGameWinners);
 
 colorGameRouter.route("/last-game-result").get(isAuthenticated, getLastColorGameResult);
 
-colorGameRouter.route("/get-games").get(isAuthenticated);
+colorGameRouter.route("/get-previous-games").get(isAuthenticated, getLastColorGames);
