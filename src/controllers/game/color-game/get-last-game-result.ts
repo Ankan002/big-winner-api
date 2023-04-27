@@ -2,24 +2,24 @@ import { Request, Response } from "express";
 import { getPrismaClient } from "utils/get-prisma-client";
 import { logger } from "utils/logger";
 
-export const getLastDailyWinJackpotResult = async (req: Request, res: Response) => {
+export const getLastColorGameResult = async (req: Request, res: Response) => {
 	const prismaClient = getPrismaClient();
 
 	try {
-		const lastDailyWinJackPotResult = await prismaClient.dailyWinJackpot.findFirst({
+		const lastGameResult = await prismaClient.colorGame.findFirst({
 			where: {
 				status: "closed",
 			},
 			select: {
 				id: true,
 				status: true,
-				winning_number: true,
-				daily_win_jackpot_winners: {
+				winning_color: true,
+				color_game_winners: {
 					select: {
 						id: true,
 						token_amount_won: true,
 						userId: true,
-						entryId: true,
+						colorGameEntryId: true,
 						user: {
 							select: {
 								id: true,
@@ -30,7 +30,6 @@ export const getLastDailyWinJackpotResult = async (req: Request, res: Response) 
 					},
 				},
 			},
-			take: 1,
 			orderBy: {
 				created_at: "desc",
 			},
@@ -39,7 +38,7 @@ export const getLastDailyWinJackpotResult = async (req: Request, res: Response) 
 		return res.status(200).json({
 			success: true,
 			data: {
-				last_daily_win_jackpot_result: lastDailyWinJackPotResult,
+				last_color_game_result: lastGameResult,
 			},
 		});
 	} catch (error) {
@@ -56,7 +55,7 @@ export const getLastDailyWinJackpotResult = async (req: Request, res: Response) 
 
 		return res.status(500).json({
 			success: false,
-			error: "Inetrnal Server Error!!",
+			error: "Internal Server Error",
 		});
 	}
 };

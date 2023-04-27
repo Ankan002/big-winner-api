@@ -2,35 +2,32 @@ import { Request, Response } from "express";
 import { getPrismaClient } from "utils/get-prisma-client";
 import { logger } from "utils/logger";
 
-export const getLastDailyWinMegaJackpotResult = async (req: Request, res: Response) => {
+export const getCurrentColorGameCurrentUserEntry = async (req: Request, res: Response) => {
+	const user = req.user;
+
+	if (!user) {
+		return res.status(400).json({
+			success: false,
+			error: "No user found!!",
+		});
+	}
+
 	const prismaClient = getPrismaClient();
 
 	try {
-		const lastDailyWinMegaJackpotResult = await prismaClient.dailyWinMegaJackpot.findFirst({
+		const currentGameEntry = await prismaClient.colorGameEntry.findFirst({
 			where: {
-				status: "closed",
+				color_game: {
+					status: "open",
+				},
+				userId: user.id,
 			},
 			select: {
 				id: true,
-				status: true,
-				winning_number: true,
-				daily_win_mega_jackpot_winners: {
-					select: {
-						id: true,
-						token_amount_won: true,
-						userId: true,
-						entryId: true,
-						user: {
-							select: {
-								id: true,
-								email: true,
-								username: true,
-							},
-						},
-					},
-				},
+				userId: true,
+				picked_color: true,
+				token_amount: true,
 			},
-			take: 1,
 			orderBy: {
 				created_at: "desc",
 			},
@@ -38,9 +35,7 @@ export const getLastDailyWinMegaJackpotResult = async (req: Request, res: Respon
 
 		return res.status(200).json({
 			success: true,
-			data: {
-				last_daily_win_mega_jackpot_result: lastDailyWinMegaJackpotResult,
-			},
+			current_game_entry: currentGameEntry,
 		});
 	} catch (error) {
 		if (error instanceof Error) {
