@@ -28,6 +28,16 @@ enum ColorGameChoice {
   green
 }
 
+enum PracticeGameType {
+  regular
+  mega
+}
+
+enum PracticeGameWinnerPosition {
+  first
+  second
+}
+
 model Admin {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   email      String   @unique
@@ -62,6 +72,8 @@ model User {
   daily_win_mega_jackpot_winner DailyWinMegaJackpotWinner[]
   color_game_entry              ColorGameEntry[]
   color_game_winner             ColorGameWinner[]
+  practice_game_entry           PracticeGameEntry[]
+  practice_game_winner          PracticeGameWinner[]
 }
 
 model Profile {
@@ -210,4 +222,37 @@ model ColorGameWinner {
   token_amount_won Int
   created_at       DateTime       @default(now()) @map("createdAt")
   updated_at       DateTime       @updatedAt @map("updatedAt")
+}
+
+model PracticeGame {
+  id                    String               @id @default(auto()) @map("_id") @db.ObjectId
+  date                  String
+  status                GameStatus           @default(open)
+  type                  PracticeGameType
+  created_at            DateTime             @default(now()) @map("createdAt")
+  updated_at            DateTime             @updatedAt @map("updatedAt")
+  practice_game_entries PracticeGameEntry[]
+  practice_game_winners PracticeGameWinner[]
+}
+
+model PracticeGameEntry {
+  id             String       @id @default(auto()) @map("_id") @db.ObjectId
+  game           PracticeGame @relation(fields: [practiceGameId], references: [id])
+  practiceGameId String       @db.ObjectId
+  user           User         @relation(fields: [userId], references: [id])
+  userId         String       @db.ObjectId
+  created_at     DateTime     @default(now()) @map("createdAt")
+  updated_at     DateTime     @updatedAt @map("updatedAt")
+}
+
+model PracticeGameWinner {
+  id               String                     @id @default(auto()) @map("_id") @db.ObjectId
+  position         PracticeGameWinnerPosition
+  token_amount_won Int
+  game             PracticeGame               @relation(fields: [practiceGameId], references: [id])
+  practiceGameId   String                     @db.ObjectId
+  user             User                       @relation(fields: [userId], references: [id])
+  userId           String                     @db.ObjectId
+  created_at       DateTime                   @default(now()) @map("createdAt")
+  updated_at       DateTime                   @updatedAt @map("updatedAt")
 }
