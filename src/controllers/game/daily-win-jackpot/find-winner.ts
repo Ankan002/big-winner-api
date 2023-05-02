@@ -124,7 +124,7 @@ export const findDailyWinJackpotWinners = async (req: Request, res: Response) =>
 					userId: winningBet.userId,
 				},
 				data: {
-					winning_balance: {
+					current_balance: {
 						increment: winningBet.token_amount * 9,
 					},
 				},
